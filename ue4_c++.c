@@ -107,4 +107,220 @@
         现在，让我们看看设计师如何从我们卑微的七点开始创建独特的类。
 
         我们要做的第一件事是从我们的AMyActor类中创建一个新的蓝图类。
+
+        选择Select后，将会创建一个名为Blueprint的新默认类。
+
+        这时设计师更改TotalDamage为300，将DamageTimeInSeconds更改为2秒。这就是属性现在的显示方式。
+
+        计算值与我们的预期不符。它应该是150，但它仍然是默认值200。原因是我们只在加载过程中初始化属性
+        之后才计算我们的每秒伤害值。不考虑编辑器的运行时更改。这个问题有一个简单的解决方案，因为引擎
+        会在编辑器中更改目标对象时通知它。下面的代码显示了在编辑器中计算派生值所需的附加挂钩。
+
+            void AMyActor::PostInitProperties()
+            {
+                Super::PostInitProperties();
+
+                CalculateValues();
+            }
+
+            void AMyActor::CalculateValues()
+            {
+                DamagePerSecond = TotalDamage / DamageTimeInSeconds;
+            }
+
+            #if WITH_EDITOR
+            void AMyActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangeEvent)
+            {
+                CalculateValues();
+
+                Super::PostEditChangeProperty(PropertyChangeEvent);
+            }
+            #endif
+
+        需要注意的是，该PostEditChangeProperty方法位于特定于Editor的#ifdef。这样一来，构建游戏只会编译
+        实际需要的代码，删除任何可能不必要地增加可执行文件大小的额外代码。现在我们已经编译了该代码，该
+        DamagePerSecond值与我们期望的值匹配。
+
+    跨C++和蓝图边界调用函数
+        到目前位置，我们已经展示了如何向蓝图公开属性，但在深入了解引擎之前，我们应该介绍最后一个介绍性主题。
+        在创建游戏系统时，设计师需要能够调用由C++程序员创建的函数。程序员还需要能够从C++代码调用在蓝图中实
+        现的函数。让我们首先让CalculateValues()函数可以从蓝图中调用。向蓝图公开函数就像公开属性一样简单。
+        它只需要在函数声明之前放置一个宏！下面的代码片段显示了此操作所需的内容。
+            UFUNCTION(BlueprintCallable, Category="Damage")
+            void CalculateValues();
+        UFUNCTION()宏把手暴露给C++函数的反射系统。该BlueprintCallable选项将其公开给蓝图虚拟机。每个蓝图
+        公开的功能都需要一个与之关联的类别，以便右键单机上下文菜单正常工作。
+        
+        该功能可从"损坏"类别中选择。下面的蓝图代码显示了TotalDamage值的变化，随后调用了重新计算相关数据。
+        这使用我们之前添加的相同函数来计算我们的依赖属性。大部分引擎通过UFUNCTION()宏暴露给蓝图，因此人们
+        无需编写C++代码即可构建游戏。但是，最好的方法时使用C++构建基本游戏系统和性能关键代码，并使用蓝图自
+        定义行为或从C++构建块创建复合行为。
+
+        现在设计人员可以调用我们的C++代码，让我们探索一种更强大的方法来跨越C++/蓝图边界。这种方法允许C++
+        代码调用蓝图中定义的函数。我们经常使用这种方法来通知设计师他们可以在他们认为合适的情况下响应事件。
+        这通常包括产生效果或其他视觉影响，例如隐藏或取消隐藏演员。下面的代码片段显示了一个由蓝图实现的函数。
+            UFUNCTION(BlueprintImplementableEvent, Category="Damage")
+            void CalledFromCpp();
+        该函数的调用方式与任何其他C++函数一样。在幕后，虚幻引擎会生成一个基本的C++函数实现，该实现了解如何
+        调用蓝图VM。这通常称为Thunk。如果所讨论的蓝图没有为此方法提供函数体，则该函数的行为就像一个没有主体
+        的C++函数；它什么都不做。如果您想提供C++默认实现，同时仍允许蓝图覆盖该方法，该怎么办？UFUNCTION()
+        宏也有一个选项。下面的代码片段实现这一点所需的更改。
+            UFUNCTION(BlueprintNativeEvent, Category="Damage")
+            void CalledFromCpp();
+        
+        此版本仍会生成调用蓝图VM的thunking方法。那么如何提供默认实现呢？这些工具还会生成一个新的函数声明，
+        看起来像<function name>_Implementation()。必须提供此版本的功能，否则项目将无法链接。
+            void AMyActor::CalledFromCpp_Implementation()
+            {
+                // Do something cool here
+            }
+        现在，当相关蓝图未覆盖该方法时，将调用此版本的函数。请注意，在以前版本的构建工具中，_Implementation()
+        声明是自动生成的。在4.8以及更高的版本中，必须将其显式添加到标题中。
+
+    虚幻对象[UObject]
+        引擎中的基本构建块称为UObject。这个类，加上UClass，提供了一些引擎最重要的服务：
+            属性和方法的反射
+            属性序列化
+            垃圾收集
+            UObject按名称查找
+            属性的可配置值
+            对属性和方法的网络支持
+        每个派生自类UObject都有一个UClass为其创建的单例，其中包含有关类实例的所有元数据。UObject和UClss一起
+        是一切的根，它的寿命期和一个游戏对象一样。考虑aUClass和a之间区别的最好方法UObject是UClass描述a的实例
+        将是什么样子，哪些属性可用于序列化、网络等等。大多数游戏玩法开发不涉及直接派生自UObject，而是从AActor
+        和UActorComponet派生。你不需要知道UClass或UObject工作的细节编写游戏代码，但很高兴知道这些系统的存在。
+
+    演员[Actor]
+        AActor是UObject游戏体验的一部分。Actor要么由设计师放置在关卡中，要么在运行时通过游戏系统创建。所有可以
+        放入关卡的对象都从这个类扩展而来。实例包括AStaticMeshActor，ACameraActor和APointLight。由于AActor派
+        生自UObject，因此它享有上一节中列出的所有标准功能。Actor可以通过游戏代码（C++或蓝图）或从内存中卸载拥有
+        的关卡时通过标准垃圾收集机制显示销毁。Actor负责游戏对象的高级行为。
+
+        Actor有一系列在其声明周期中被调用的事件。
+            BeginPlay：当Actor在游戏过程中首次出现时调用。
+            Tick：每帧调用一次以随着事件的推移进行工作。
+            EndPlay：当对象离开游戏空间时调用。
+
+    运行时声明周期
+        Actor被加载并开始存在，最终关卡被卸载，Actor被销毁。
+
+    UActor组件[UActorComponent]
+        一个Component只能附加到一个父Component或Actor，但它可能有许多附加到自己的子Components。想象一棵组件树。
+        子组件具有相对于其父组件或Actor的位置、旋转和缩放。
+            RootComponent：这时AActor在Actor的组件树中拥有顶级组件的成员
+            Ticking：组件作为拥有ActorTick函数的一部分进行标记。一定要Super::Tick在编写自己的Tick函数时调用。
+
+    结构[UStruct]
+        UStruct实例不会被垃圾收集。如果创建它们的动态实例，必须自己管理它们的生命周期。AUStruct应该时一个普通数据
+        类型，具有UObject反射支持，可在虚幻编辑器中进行编辑、蓝图操作、序列化、网络等。
+
+    虚幻反射系统
+        UE4使用自己的反射实现，支持垃圾收集、序列化、网络复制和蓝图/C++通信等动态功能。这些功能是可选的，这意味着必
+        须为您的类型添加正确的标记，否则Unreal将忽略它们并且不会为它们生成反射数据。
+            UCLASS()：用于告诉Unreal为类生成反射数据，该类必须派生自UObject。
+            USTRUCT()：用于告诉Unreal为结构生成反射数据。
+            GENERATED_BODY()：UE4将其替换为为该类型生成的所有必要样板代码。
+            UPROPERTY()：允许将UCLASS或USTRUCT的成员变量用作UPROPERTY。UPROPERTY有很多用途。它可以允许从蓝图中
+                复制、序列化和访问变量。垃圾收集器也使用它们来跟踪对象UObject。
+            UFUNCTION()：允许将UCLASS或USTRUCT的类方法用作UFUNCTION。UFUNCTION可以允许从蓝图中调用类方法并将其
+            用作RPC等。
+
+        UCLASS的示例声明：
+            #include "MyObject.generated.h"
+
+            UCLASS(Blueprintable)
+            class UMyObject : public UObject
+            {
+                GENERATED_BODY()
+
+            public:
+                UMyObject();
+
+                UPROPERTY(BlueprintReadOnly, EditAnywhere)
+                float ExampleProperty;
+
+                UFUNCTION(BlueprintCallable)
+                void ExampleFunction();
+            };
+        包含MyObject.generated.h。UE4会生成所有的反射数据并放入这个文件中。必须将此文件作为最后一个包含在声明类型的
+        头文件中。
+
+        UCLASS，UPROPERTY和UFUNCTION标记，添加一些常见的说明符。这些允许我们指定某些行为或属性。
+            Blueprintable：此类可以通过蓝图进行扩展。
+            BlueprintReadOnly：该属性可以从蓝图中读取，但不能写入。
+            EditAnywhere：此属性可以通过属性窗口、原型和实例进行编辑。
+            Category：定义此属性出现在编辑器的详细信息视图中的哪个部分。这有助于组织目的。
+            BlueprintCallable：该函数可以从蓝图中调用。
+
+    对象/参与者迭代器
+        对象迭代器是迭代特定UObject类型及其子类的所有实例非常有用的工具。
+            for (TObjectInterator<UObject> It; It; ++It)
+            {
+                UObject* CurrentObject = *It;
+                UE_LOG(LogTemp, log, TEXT("Found UObject named: %s"), *CurrentObject->GetName());
+            }
+        可以通过为迭代器提供更具体的类型来限制搜索范围。假设有一个名为UMyClass的类，派生自UObject。可以这样找到所有
+        实例：
+            for (TObjectInterator<UMyClass> It; It; ++It)
+            {
+                // ...
+            }
+
+        Actor迭代器和对象迭代器非常相似，但仅适用于派生自AActor的对象。
+        创建Actor迭代器时，需要给它一个指向UWorld实例的指针。许多UObject类，例如APlayerController，提供了一个GetWorld
+        方法。如果不确定，可以查看a上的ImplementsGetWorld方法UObject，看是否实现了GetWorld方法。
+            APlayerController* MyPC = GetMyPlayerControllerFromSomewhere();
+            UWorld* World = MyPC->GetWorld();
+
+            // Like object iterators, you can provide a specific class to get only objects that are
+            // or derive from that class
+            for (TActorInterator<AEnemy> It(World); It; ++It)
+            {
+                // ...
+            }
+            NOTE
+                由于AActor派生自UObject，因此也可以使用TObjectIterator来查找实例AActors。在PIE中要小心！
+
+    内存管理和垃圾收集
+        UOjects和垃圾收集
+            UE4使用反射系统来实现垃圾回收系统。使用垃圾回收，不必手动管理删除UObject实例，只需要维护对它们的有效引用。
+            类需要派生自UObject才能启用垃圾收集。
+            在垃圾收集器中，有一个概念叫做根集。根集时收集器知道永远不糊ibei垃圾收集的对象列表。只要存在从根集中的对象
+            到相关对象的引用路径，对象就不会被垃圾回收。如果一个对象不存在到根集这样的路径，则它被称为不可达并且将在下
+            次垃圾收集器运行时被收集（删除）。引擎以一定的时间间隔运行垃圾收集器。
+
+        Actors和垃圾收集
+            除了关卡关闭期间，Actor通产不会被垃圾回收。生成后，必须手动调用Destory它们以将它们从关卡中移除而不结束关卡。
+            它们将立即从游戏中删除，然后在下一个垃圾收集阶段完全删除。
+
+        结构
+            UStructs不能被垃圾收集。如果必须使用动态实例UStructs，使用智能指针。
+
+        非UObject引用
+            普通C++对象（不是派生UObject的）也可以添加对对象的引用并防止垃圾收集。对象必须从FGCObject派生并覆盖其
+            AddReferencedObjects方法。
+
+    类命名前缀
+        虚幻引擎提供了在构建过程中生成代码的工具。这些工具有一些类命名期望，如果名称与期望不匹配，将触发警告或错误。
+            从Actor派生的类以A为前缀，例如AContorller。
+            从Object派生的类以U为前缀，例如UComponent。
+            枚举以E为前缀，例如EFortificationType。
+            接口类通常以I为前缀，例如IAbilitySystemInterface。
+            模板类以T为前缀，例如TArray。
+            派生自SWidget(Slate UI)的类以S为前缀，例如SButton。
+            其他所有内容都以字母F为前缀，例如FVector。
+
+    数值类型
+        由于不同平台对于short、int和long等基本类型有不同的大小，因此UE4提供了以下类型：
+            int8/uint8：8位有符号/无符号整数
+            int16/uint16：16位有符号/无符号整数
+            int32/uint32：32位有符号/无符号整数
+            int64/uint64：64位有符号/无符号整数
+        标准float(32位)和double(64位)类型也支持浮点数
+
+    字符串
+        UE4提供了几个不同的类来处理字符串
+        FString是一个可变字符串，类似std::string。FString有大量的方法可以轻松处理字符串。要创建一个新的FString，
+        请使用TEXT宏：
+            FString MyStr = TEXT("Hello, Unreal 4!")
 */
