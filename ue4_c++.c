@@ -323,4 +323,22 @@
         FString是一个可变字符串，类似std::string。FString有大量的方法可以轻松处理字符串。要创建一个新的FString，
         请使用TEXT宏：
             FString MyStr = TEXT("Hello, Unreal 4!")
+
+    文本
+        FText类似与FString，但它适用于本地化文本。要创建一个新的FText，请使用NSLOCTEXT宏。此宏采用默认语言的命名
+        空间、键和值：
+            FText MyText = NSLOCTEXT("Game UI", "Health Warning Message", "Low Health!")
+        也可以使用LOCTEXT宏，只需为每个文件定义一次命名空间。确保在文件底部取消定义它。
+            #define LOCTEXT_NAMESPACE "Game UI"
+
+            FTEXT MyText = LOCTEXT("Health Warning Message", "Low Health!")
+
+            #undef LOCTEXT_NAMESPACE
+
+    名称
+        FName将重复出现的字符串存储为标识符，以便在比较它们时节省内存和CPU时间。FName使用映射到给定字符串的较小存储
+        占用索引。
+
+    TCHAR
+        
 */
