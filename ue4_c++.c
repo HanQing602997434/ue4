@@ -340,5 +340,45 @@
         占用索引。
 
     TCHAR
+        TCHAR类型用作一个独立于所使用字符集的字符存储方式。在底层，UE4字符串使用TCHAR数组以UTF-16编码存储数据。可以
+        使用重载的解引用运算符访问原始数据，该运算符返回TCHAR。
+
+        这对于某些函数是必需的，例如FString::Printf，"%s"字符串格式说明符需要TCHAR而不是FString。
+            FString Str1 = TEXT("World");
+            int32 Val1 = 123;
+            FString Str2 = FString::Printf(TEXT("Hello, %s! You have %i points."), *Str1, Val1);
         
+        该FChar类型提供了一组用于处理单个TCHAR字符的静态实用程序函数。
+            TCHAR Upper('A');
+            TCHAR Lower = FChar::ToLower(Upper); // 'a'
+            NOTE
+                该FChar类型定义为TChar<TCHAR> （在API中列出）。
+
+    容器
+        容器的主要功能是存储数据集合的类。这些类中最常见的是TArray，TMap和TSet。其中每一个都是动态大小的。
+
+    数组
+        虚幻中使用的主要容器是TArray，它的功能与std::vector非常相似，但提供了很多功能。
+        TArray具有将其元素垃圾收集的额外好处。
+
+    TMap
+        TMap是键值对的集合，类似于std::map。TMap具有根据键查找、添加和删除元素的快速方法。可以使用任何类型的键，只要
+        它具有GetTypeHash为它定义的函数。
+
+    TSet
+        TSet存储唯一值的集合，类似于std::set。尽管TArray它的AddUnique和Contains方法支持类似集合的行为，但TSet这些
+        操作的实现速度更快，并且可以防止自动添加非唯一元素。
+
+    容器迭代器
+        使用迭代器，可以遍历容器的每个元素。
+            for (auto EnemyIterator = Enemy.CreateIterator(); EnemyIterator; ++EnemyIterator)
+            {
+
+            }
+
+    For-each循环
+        每个容器类还支持"for each"样式语法来循环元素。TArray和TSet返回每个元素，而TMap返回一个键值对。
+
+    使用自定义类型和TSet/TMap（哈希函数）
+        创建自己的类并希望在a中使用它TSET，或者作为a中的键TMap，则需要提供一个散列函数。
 */
