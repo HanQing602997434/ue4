@@ -25,5 +25,6 @@
     Event AnyDamage
         受到伤害事件
 
-    
+    GetPlayerPawn
+        返回指定玩家索引处的玩家Pawn
 */
