@@ -18,4 +18,12 @@
 
     AI流程
         创建AI -》 创建AIController并设置为AI的AI Controller Class -》 RunBehaviorTree -》 设置行为树 -》 执行各种行为 -》 Sequence序列 -》 Selector选择器
+
+    ApplyDamage
+        造成伤害函数
+
+    Event AnyDamage
+        受到伤害事件
+
+    
 */
