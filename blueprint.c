@@ -47,4 +47,7 @@
 
     MultiSphereTraceForObjects
         球形范围检测，获取目标
+
+    动画蓝图
+        所有动画中的通知可以在动画蓝图中获取事件
 */
