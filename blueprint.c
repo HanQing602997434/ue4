@@ -67,4 +67,12 @@
                 参与者之间的碰撞响应必须允许重叠。
                 执行事件的两个Actor都将Generate Overlap Events设置为true。
                 最后，两个Actor的碰撞开始重叠；一起移动或创建一个重叠另一个。
+
+        EventActorEndOverlap
+            当同时满足多个条件时，将执行此事件：
+                参与者之间的碰撞响应必须允许重叠。
+                执行事件的两个Actor都将Generate Overlap Events设置为true。
+                最后，两个Actor的碰撞停止重叠；分开或如果一个被摧毁。
+
+        
 */
