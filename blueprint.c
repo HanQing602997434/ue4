@@ -73,4 +73,9 @@
                 参与者之间的碰撞响应必须允许重叠。
                 执行事件的两个Actor都将Generate Overlap Events设置为true。
                 最后，两个Actor的碰撞停止重叠；分开或如果一个被摧毁。    
+
+    DataTable
+        数据表就是以有意义且有用的方式将各种相关的数据归类的表格。其中，数据字段可以是任何有效的UObject
+        属性，包括资产引用。
+        DataTable可以导出为CSV文件，也可以由CSV文件导入
 */
