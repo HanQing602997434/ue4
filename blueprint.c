@@ -77,5 +77,14 @@
     DataTable
         数据表就是以有意义且有用的方式将各种相关的数据归类的表格。其中，数据字段可以是任何有效的UObject
         属性，包括资产引用。
-        DataTable可以导出为CSV文件，也可以由CSV文件导入
+        DataTable可以导出为CSV文件，也可以由CSV文件导入。
+
+    Structure
+        结构体，得到变量，通过Break Struct节点分解结构体，就能访问到结构体的每个元素了。
+        想要给结构体赋值，需要用到Make Struct，然后Set变量。
+
+    Enum
+        枚举直接获取和进行设置
+
+    
 */
