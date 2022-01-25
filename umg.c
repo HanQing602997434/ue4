@@ -123,5 +123,81 @@
             如果连 接的是Handled表示输入已处理完，不再向下执行输入逻辑
             如果连接的是Unhandled表示输入未处理完，继续向下执行输入逻辑
 
-    
+    输入模式和鼠标指针
+        Set Input Mode Game And UI
+            游戏和UI都接收设置输入模式
+
+        Set Input Mode Game Only
+            只接收游戏设置输入模式
+
+        Set Input Mode UI Only
+            只接收UI设置输入模式
+
+        Set Mouse Cursor
+            设置鼠标是否可见
+
+    Progress和Image控件
+        进度条和图像控件
+        
+        ZOrder
+            渲染层级，值越大越后渲染
+
+        Is Marquee
+            滚动条
+
+        Size To Content
+            匹配内容大小
+
+    尺寸框、水平框与垂直框
+        Size Box
+            用于控制或强行控制子控件的大小，只能有一个子控件
+
+        Horizontal Box
+            水平框，可以容纳多个子控件
+
+        Vertical Box
+            垂直框，可以容纳多个子控件
+
+    Spacer、Border和Overlay控件
+        Spacer
+            控制两个控件之间的距离
+
+        Border
+            用于背景控制
+
+        Overlay
+            自动叠加渲染控件
+
+    Button控件
+        Style
+            Normal
+                正常状态
+
+            Hovered
+                悬浮状态
+
+            Pressed
+                按下状态
+
+            Disabled
+                不启用状态
+
+            Normal Padding
+                正常子控件偏移
+
+            Pressed Padding
+                点击子控件偏移
+
+            Pressed Sound
+                点击按钮的声音
+
+            Hovered Sound
+                悬浮按钮的声音
+
+        Events
+            On Clicked
+            On Pressed
+            On Released
+            On Hovered
+            On Unhovered
 */
