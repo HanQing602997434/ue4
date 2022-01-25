@@ -75,5 +75,51 @@
                 Separate Fill Alpha
                     边框分离
 
-                
+                Apply Outline to Drop
+                    边框阴影
+
+                Outline Material
+                    边框材质
+
+                Outline Color
+                    边框颜色
+
+        Strike Brush
+            下划线
+
+        Shadow Offset
+            阴影偏移，阴影投射的角度
+
+        Shadow Color
+            阴影颜色
+
+            Min Desired Width
+                最小期望宽度
+            
+            Justification
+                自适应对齐
+
+        Wrapping
+            包装
+        
+            Auto Wrap Text
+                文本自动换行
+
+            Wrap Text At
+                文本换行的阈值
+
+        Pivot
+            旋转支点
+
+        Clipping
+            剪切，屏幕之外进行剪切
+
+    UI响应玩家输入
+        1.在UI的Graph的function中重载OnKeyDown
+        2.在事件Event Construct中设置焦点SetKeyboardFocus
+        3.在Designer界面选择最上层的UI，在Details面板设置Is Focusable为真
+
+        Return Node节点的Return Value
+            如果连 接的是Handled表示输入已处理完，不再向下执行输入逻辑
+            如果连接的是Unhandled表示输入未处理完，继续向下执行输入逻辑
 */
