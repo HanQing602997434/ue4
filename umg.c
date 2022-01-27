@@ -223,4 +223,9 @@
         进度条不能添加子节点
 
     Slider 滑块
+        滑块不能添加子节点
+
+    Text Box 文本输入框
+        输入框不能添加子节点
+        文本输入有单行输入(Common>Text Box)和多行输入(Input>Text Box Multi-Line)两种。
 */
