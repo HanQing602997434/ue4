@@ -228,4 +228,13 @@
     Text Box 文本输入框
         输入框不能添加子节点
         文本输入有单行输入(Common>Text Box)和多行输入(Input>Text Box Multi-Line)两种。
+
+    UI资源导入操作
+        图片资源导入工程后，选中资源，右键点击Asset Actions -> Bluk Edit via Property Matrix
+
+        LevelOfDetail -> Texture Group 将World改成UI
+
+        Compression -> Compression Settings 改成UserInterface2D (RGBA)
+
+        这样就将图片转换为2D贴图了。
 */
