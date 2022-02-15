@@ -86,5 +86,6 @@
     Enum
         枚举直接获取和进行设置
 
-    
+    DataTable(数据表)
+        数据表创建需要选择结构体，所以GetDataTableRow函数的OutRow就是创建表选择的结构体
 */
