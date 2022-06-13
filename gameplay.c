@@ -43,4 +43,22 @@
         黑板共享数据
         AI感知
         EQS环境查询
+
+    ULevel关卡
+        Actor的集合
+        World里的板块
+        对应umap
+
+    UWorld
+        Level的集合
+        运行时的真正的Actor集合
+        “关卡”的真正单位
+        场景的真正表示对象
+
+    AGameMode & AGameState
+        世界规则
+        最权威
+
+        世界状态
+        通知到各端
 */
