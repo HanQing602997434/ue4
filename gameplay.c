@@ -26,4 +26,21 @@
         逻辑足够复杂MVC
         肉体
         人形角色
+
+    AController & APlayerState
+        用来控制别的Actor的Actor
+        灵魂
+
+        肉体状态
+        抽离开是为了联机复制
+
+    APlayerController & AAIController
+        主角灵魂
+        和玩家沟通的渠道
+
+        AI灵魂
+        行为树功能强大
+        黑板共享数据
+        AI感知
+        EQS环境查询
 */
