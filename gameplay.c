@@ -61,4 +61,11 @@
 
         世界状态
         通知到各端
+
+    UGameInstance - USaveGame
+        整场游戏的全局实例
+        World的外围管理对象
+        跨关卡的逻辑
+
+        游戏存档
 */
