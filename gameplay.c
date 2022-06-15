@@ -76,3 +76,12 @@
         托管生命周期
         替代Manager类
 */
+
+// 实战架构
+/*
+    玩家登录DS server会在GameMode中进行登录退出
+        登录：OnPostLogin，登录在每次切换关卡时会进行
+        退出：OnLogout，退出在退出关卡时会进行
+
+    
+*/
