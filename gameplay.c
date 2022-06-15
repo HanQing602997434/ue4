@@ -83,5 +83,6 @@
         登录：OnPostLogin，登录在每次切换关卡时会进行
         退出：OnLogout，退出在退出关卡时会进行
 
-    
+    在GameMode的BeginPlay中进行GameState的设置
+    GameMode只在服务器有一份数据
 */
