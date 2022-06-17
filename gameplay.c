@@ -90,5 +90,6 @@
     从GameState中获取所有玩家的PlayerState
 
     玩家通过PlayerController中的OnPossess事件登录服务器
-    登录后可以获取服务器的所有PlayerController
+    登录后可以获取服务器的所有PlayerController，根据从服务器获取PlayerState得到玩家的数据
+    
 */
