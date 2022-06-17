@@ -85,4 +85,7 @@
 
     在GameMode的BeginPlay中进行GameState的设置
     GameMode只在服务器有一份数据
+
+    PlayerController登录服务器后
+    从GameState中获取所有玩家的PlayerState
 */
