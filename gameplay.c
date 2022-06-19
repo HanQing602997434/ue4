@@ -84,7 +84,7 @@
         退出：OnLogout，退出在退出关卡时会进行
 
     在GameMode的BeginPlay中进行GameState的设置
-    GameMode只在服务器有一份数据
+    GameMode只在服务器有一份数据，GameMode控制地图的创建和销毁
 
     PlayerController登录服务器后
     从GameState中获取所有玩家的PlayerState
