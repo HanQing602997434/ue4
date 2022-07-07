@@ -12,4 +12,6 @@
 
     2.设置服务器构建目标，添加一个可执行文件ProjectServer.exe
         1).打开项目解决方案
+        2).在Source文件夹找到Project.Target.cs文件
+        3).在Source文件夹中创建一个副本并重命名ProjectServer.Target.cs
 */
