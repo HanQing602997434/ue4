@@ -8,4 +8,8 @@
             3).管理员运行GenerateProjectFiles.bat生成sln工程
             4).用VS2017以上版本打开解决方案，用Development Editor Win64编译
             5).首次编译过程中会遇到各种问题，有可能是编译顺序导致，重新编译即可
+            6).编译Development Server Win64
+
+    2.设置服务器构建目标，添加一个可执行文件ProjectServer.exe
+        1).打开项目解决方案
 */
