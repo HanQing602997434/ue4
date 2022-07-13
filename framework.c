@@ -10,4 +10,5 @@
             重写HorusServer。
             深入理解Advance Session
 	    专用服务器启动不一样的地图
+	    开始的服务器的session是什么
 */
